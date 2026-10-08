@@ -145,8 +145,24 @@ RAIZ="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 #    de usuario: essa VPN cai junto com o tunel, e a sessao morreria no meio
 #    do teste — que e exatamente o evento medido.
 # O .env e lido ANTES das checagens, e nunca entra no git.
+#
+# ⚠️ LIDO LINHA A LINHA, NAO COM `source`. Medido em 2026-10-08: uma senha com
+#    `$` dentro faz o shell tentar expandir, e sob `set -u` o script morre em
+#    "unbound variable" apontando para o .env. Alem disso, `source` executaria
+#    qualquer coisa escrita no arquivo. Aqui nada e expandido nem executado.
 if [ -f "$RAIZ/.env" ]; then
-  set -a; . "$RAIZ/.env"; set +a
+  while IFS= read -r _l || [ -n "$_l" ]; do
+    case "$_l" in ''|'#'*) continue ;; esac
+    case "$_l" in *=*) : ;; *) continue ;; esac
+    _k=${_l%%=*}; _v=${_l#*=}
+    case "$_k" in *[!A-Za-z0-9_]*) continue ;; esac
+    case "$_v" in
+      \'*\') _v=${_v#\'}; _v=${_v%\'} ;;
+      \"*\") _v=${_v#\"}; _v=${_v%\"} ;;
+    esac
+    eval "export $_k=\$_v"
+  done < "$RAIZ/.env"
+  unset _l _k _v
 fi
 : "${GW_A:?defina GW_A, ex.: GW_A=192.168.1.1}"
 : "${GW_B:?defina GW_B, ex.: GW_B=192.168.2.1}"

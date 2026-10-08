@@ -166,9 +166,24 @@ agents are referred to by role rather than name, and the witness host lost its
 name. The logic was not touched. Because of that the published file no longer
 hashes to the value stamped in my packages, which is the honest trade.
 
-**Not verified:** that this sanitized copy still runs end to end. The edits were
-constants and comments, and the shell parses clean, but it has not carried a
-cable pull since. If it breaks for you, that is a finding. Open an issue.
+**Verified on 8 October 2026:** this sanitized copy was run against the real
+pair, in `--ensaio` mode, which exercises everything except the cable itself. It
+authenticated to both consoles, agreed the clocks to the second, found the
+tunnel and the interface it currently exits by, confirmed the surviving WAN
+holds a public address, armed a detached capture on the far gateway and
+collected it, and sent UDP/20000 probes from the far site that arrived on the
+near site's surviving WAN. Exit code 0.
+
+**Still not exercised by this copy:** the outage path itself. The behaviour it
+depends on is established by the seven original runs, but the sanitized file has
+not yet carried a cable pull of its own. If it breaks for you, that is a
+finding. Open an issue.
+
+One thing the dry run caught, which is worth knowing before you start: if your
+console password contains a `$`, older copies of this script died with
+`unbound variable` because the `.env` was sourced. It is now parsed line by
+line, nothing is expanded and nothing is executed. Quote values or don't, both
+work.
 
 ## A note on language
 
