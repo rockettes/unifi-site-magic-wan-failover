@@ -1,8 +1,11 @@
 # Does UniFi Site Magic / SD-WAN Mesh fail over between WANs?
 
 This is the harness that produced the evidence in Ubiquiti support ticket
-#5927426. Seven reproductions between 1 and 24 September 2026, each one by
-physically pulling a WAN cable, with both gateways instrumented from the inside.
+#5927426. Seven consecutive runs between 21 and 24 September 2026, after a
+first observation on 1 September, each one by physically pulling the WAN1 cable
+and watching the tunnel for at least 15 minutes. Instrumentation grew during
+the series: the remote gateway was instrumented from the inside in the last
+three runs (23–24 September).
 On 27 September the vendor's escalation team reviewed those runs and wrote that
 the measured behaviour does not match the expected failover behaviour.
 
@@ -156,7 +159,11 @@ generates them because the vendor asks for them, not so you can publish them.
 
 ## Provenance, and what is not verified
 
-The seven runs are in the ticket. The script's own SHA-256 and the hash of its
+Five of the seven runs were delivered to the ticket as complete packages
+(22, 23 and 24 September); the two runs of 21 September are kept with caveats
+(one summarised by hand, one with an incomplete outside probe). Earlier attempts
+on 19 September, made with a measurement bug since fixed, gave mixed results and
+were withdrawn from the evidence. The script's own SHA-256 and the hash of its
 measurement section are stamped into every package it writes, so a package can
 be tied to the exact code that produced it.
 
@@ -175,7 +182,7 @@ collected it, and sent UDP/20000 probes from the far site that arrived on the
 near site's surviving WAN. Exit code 0.
 
 **Still not exercised by this copy:** the outage path itself. The behaviour it
-depends on is established by the seven original runs, but the sanitized file has
+depends on is established by the original runs, but the sanitized file has
 not yet carried a cable pull of its own. If it breaks for you, that is a
 finding. Open an issue.
 
@@ -192,3 +199,9 @@ artifact that ran. Translating 1,500 lines would make it a different file and
 would quietly introduce errors. The output filenames keep their original names
 for the same reason: a package produced here has the same shape as the packages
 the vendor received.
+
+---
+
+*Correction, 19 October 2026: earlier versions of this README said all seven
+runs had both gateways instrumented from the inside. The remote gateway was
+instrumented in the last three runs only.*
